@@ -3,7 +3,7 @@ import { Switch } from 'antd';
 import './TicTacToe.css';
 
 /* import functions */
-let _ = require('./alpha_beta_search.js')
+let _ = require('./negamax.js')
 const is_full = _.is_full;
 const is_just_started= _.is_just_started;
 const win_check = _.win_check;
