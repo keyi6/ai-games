@@ -7,7 +7,7 @@ let _ = require('./alpha_beta_search.js')
 const is_full = _.is_full;
 const is_just_started= _.is_just_started;
 const win_check = _.win_check;
-const ai_move = _.ai_move.
+const ai_move = _.ai_move;
 
 
 /* for chessboard */
@@ -30,22 +30,22 @@ const UPPER_HEIGHT = GIRD_HEIGHT + BORDER_SIZE;
 const MIDDLE_HEIGHT = GIRD_HEIGHT + 2 * BORDER_SIZE;
 
 /* for design */
-const COLOR_ROW = ['#606470', '#7BCECC', '#F9CE00', '#4CAF50', '#FF9800'];       // background color
+const COLOR_ROW = ['#606470', '#7BCECC', '#F9CE00', '#4CAF50', '#FF9800']; // background color
 
 
 class TicTacToe extends React.Component {
     state = {
-        chessboard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],                           // chessboard
-        displayBoard: ['', '', '', '', '', '', '', '', ''],                      // display board
-        colorIdx: 0,                                                             // background color index
-        clickStatus: AI,                                                         // 0 -> nobody move, 1 -> ai move, 2 -> human move
-        firstHand: AI,                                                           // who plays first
-        result: 'Let\'s play!'                                                   // help text
+        chessboard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],                     // chessboard
+        displayBoard: ['', '', '', '', '', '', '', '', ''],                // display board
+        colorIdx: 0,                                                       // background color index
+        clickStatus: AI,                                                   // 0 -> nobody move, 1 -> ai move, 2 -> human move
+        firstHand: AI,                                                     // who plays first
+        result: 'Let\'s play!'                                             // help text
     };
 
 
     componentWillMount() {
-        this.setState({ colorIdx: Math.round(Math.random() * 432) % 5 });        // get random background color
+        this.setState({ colorIdx: Math.round(Math.random() * 432) % 5 });  // get random background color
     };
 
 
@@ -54,7 +54,7 @@ class TicTacToe extends React.Component {
     }
 
 
-    handleTie = () => {                                                          // if tie, display message and reset game
+    handleTie = () => {                                                    // if tie, display message and reset game
         this.setState({
             clickStatus: 0,
             result: 'Tie🤷‍️'
@@ -62,7 +62,7 @@ class TicTacToe extends React.Component {
     };
 
 
-    handleWin = () => {                                                          // if player win, display message and reset game
+    handleWin = () => {                                                    // if player win, display message and reset game
         this.setState({
             clickStatus: 0,
             result: 'Good for you!🤘'
@@ -70,7 +70,7 @@ class TicTacToe extends React.Component {
     };
 
 
-    handleLose = () => {                                                         // if player lose, display message and reset game
+    handleLose = () => {                                                   // if player lose, display message and reset game
         this.setState({
             clickStatus: 0,
             result: 'Loser comes to bite me🤪'
@@ -78,47 +78,47 @@ class TicTacToe extends React.Component {
     };
 
 
-    handleClick = (pos) => {                                                     // when player places chess
+    handleClick = (pos) => {                                               // when player places chess
         let x = (pos - pos % 3) / 3, y = pos % 3;
 
-        if (this.state.chessboard[x][y] === 0 &&                                 // available place
-            this.state.clickStatus !== CANNOT_CLICK) {                           // available status
+        if (this.state.chessboard[x][y] === 0 &&                           // available place
+            this.state.clickStatus !== CANNOT_CLICK) {                     // available status
             let new_chessboard = this.state.chessboard,
                 new_displayboard = this.state.displayBoard;
 
-            new_chessboard[x][y] = PLAYER;                                       // update chessboard
-            new_displayboard[pos] = '⭕️';                                        // update displayBoard
+            new_chessboard[x][y] = PLAYER;                                 // update chessboard
+            new_displayboard[pos] = '⭕️';                                  // update displayBoard
 
-            this.setState({                                                      // update state
+            this.setState({                                                // update state
                 clickStatus: PLAYER,
                 chessboard: new_chessboard,
                 displayBoard: new_displayboard
             });
 
-            if (win_check(new_chessboard) === PLAYER)                            // Win
+            if (win_check(new_chessboard) === PLAYER)                      // Win
                 this.handleWin();
-            else if (win_check(new_chessboard) === AI)                           // Lose
+            else if (win_check(new_chessboard) === AI)                     // Lose
                 this.handleLose();
-            else if (is_full(new_chessboard))                                    // Tie
+            else if (is_full(new_chessboard))                              // Tie
                 this.handleTie();
-            else {                                                               // let AI move
+            else {                                                         // let AI move
                 let res = ai_move(this.state.chessboard, PLAYER, AI);
                 console.log(this.state.chessboard, res.best_move);
                 x = res.best_move[0]; y = res.best_move[1];
 
-                new_chessboard[x][y] = AI;                                       // update chessboard
-                new_displayboard[x * 3 + y] = '❌';                              // update displayBoard
+                new_chessboard[x][y] = AI;                                 // update chessboard
+                new_displayboard[x * 3 + y] = '❌';                        // update displayBoard
 
-                this.setState({                                                  // update state
+                this.setState({                                            // update state
                     chessboard: new_chessboard,
                     displayBoard: new_displayboard
                 });
 
-                if (win_check(new_chessboard) === PLAYER)                        // Win
+                if (win_check(new_chessboard) === PLAYER)                  // Win
                     this.handleWin();
-                else if (win_check(new_chessboard) === AI)                       // Lose
+                else if (win_check(new_chessboard) === AI)                 // Lose
                     this.handleLose();
-                else if (is_full(new_chessboard))                                // Tie
+                else if (is_full(new_chessboard))                          // Tie
                     this.handleTie();
             }
         }
@@ -140,17 +140,17 @@ class TicTacToe extends React.Component {
     };
 
 
-    randomStart = () => {                                                        // random start a new game
+    randomStart = () => {                                                  // random start a new game
         let pos = Math.round(Math.random() * 863) % 9;
         let x = (pos - pos % 3) / 3, y = pos % 3;
 
         let new_chessboard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
             new_displayboard = ['', '', '', '', '', '', '', '', ''];
 
-        new_chessboard[x][y] = AI;                                               // update chessboard
-        new_displayboard[pos] = '❌';                                            // update displayBoard
+        new_chessboard[x][y] = AI;                                         // update chessboard
+        new_displayboard[pos] = '❌';                                      // update displayBoard
 
-        this.setState({                                                          // update state
+        this.setState({                                                    // update state
             result: 'Let\'s play again!',
             chessboard: new_chessboard,
             displayBoard: new_displayboard,
@@ -160,14 +160,14 @@ class TicTacToe extends React.Component {
     };
 
 
-    handleSwitch = (checked) => {                                                // switch first hand
+    handleSwitch = (checked) => {                                          // switch first hand
         this.setState({ firstHand: checked ? AI : PLAYER });
 
         if (is_just_started(this.state.chessboard)) {
             if (checked)
-                this.randomStart();                                              // random start a new game
+                this.randomStart();                                        // random start a new game
             else
-                this.setState({                                                  // clear, let PLAYER play
+                this.setState({                                            // clear, let PLAYER play
                     clickStatus: this.state.firstHand,
                     chessboard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
                     displayBoard: ['', '', '', '', '', '', '', '', ''],
@@ -176,7 +176,7 @@ class TicTacToe extends React.Component {
     }
 
 
-    render() {                                                                   // html
+    render() {                                                             // html
         return (
             <div className="container" style={{ background: COLOR_ROW[this.state.colorIdx], width: WIDTH, height: HEIGHT }}>
                 <div className="chessboard"><table>

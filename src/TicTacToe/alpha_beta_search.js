@@ -1,4 +1,7 @@
-let view = () => {};
+const AI = 1;
+const PLAYER = -1;
+const TIE = 0;
+const CANNOT_CLICK = 0;
 
 
 /* for game status check */
