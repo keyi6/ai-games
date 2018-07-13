@@ -1,4 +1,4 @@
-const INF = 21473647;
+const INF = 268435456;
 
 
 
@@ -60,12 +60,6 @@ const ai_move = (chessboard) => { //{{{
 const _generagte_available_points = () => {
 };
 
-
-
-start_game();
-console.log(g_chessboard);
-_evaluate(AI);
-console.log(g_point_type[0][HORIZON]);
 
 
 const _negamax = (role, depth, alpha, beta) => { // {{{

@@ -7,30 +7,34 @@
 
 /* for type */
 const NONE_TYPE   = 0;
-const DIE_TWO     = 1;
+const DIE_TWO	  = 1;
 const DIE_THREE   = 2;
-const DIE_FOUR    = 3;
+const DIE_FOUR	  = 3;
 const ALIVE_ONE   = 4;
 const ALIVE_TWO   = 5;
 const ALIVE_THREE = 6;
 const ALIVE_FOUR  = 7;
 const ALIVE_FIVE  = 8;
-const DB_THREE    = 9;
+const DB_THREE	  = 9;
 const THREE_FOUR  = 10
-const DB_FOUR     = 11;
+const DB_FOUR	  = 11;
+
+const INF = 268435456;
+const SCORE = [0, 10, 39, 77, 11, 41, 1000, 1000000, INF];
+const POINT_SCORE = [0, 10, 100, 1000, 10, 100, 1000, 1000, 10000];
 
 
 /* for direction */
-const HORIZON        = 0;
-const VERTICAL       = 1;
+const HORIZON		 = 0;
+const VERTICAL		 = 1;
 const LEFT_DIAGONAL  = 2;
 const RIGHT_DIAGONAL = 3;
 
 
 /* for identity representation */
-const AI     = 1;
+const AI	 = 1;
 const PLAYER = -1;
-const TIE    = 0;
+const TIE	 = 0;
 
 
 const _match_type = (arr, len, pos, role, record) => { // {{{
@@ -46,10 +50,10 @@ const _match_type = (arr, len, pos, role, record) => { // {{{
 	}
 
 	if ((pos == 0 || (pos >= 1 && arr[pos - 1] == -role)) && pos + 4 < len) { // left blocked
-		if ( arr[pos + 1] == role &&
-			 arr[pos + 2] == role &&
-			 arr[pos + 3] == role &&
-			 arr[pos + 4] == role) {
+		if (arr[pos + 1] == role &&
+			arr[pos + 2] == role &&
+			arr[pos + 3] == role &&
+			arr[pos + 4] == role) {
 			for (let i = 0; i <= 4; i ++)
 				record[pos + i] = ALIVE_FIVE;
 		}
@@ -103,7 +107,7 @@ const _match_type = (arr, len, pos, role, record) => { // {{{
 		if (r >= 4 &&
 			arr[pos + 1] == role &&
 			arr[pos + 2] == role &&
-		    arr[pos + 3] == role &&
+			arr[pos + 3] == role &&
 			arr[pos + 4] == role) {
 			for (let i = 0; i <= 4; i ++)
 				record[pos + i] = ALIVE_FIVE;
@@ -111,7 +115,7 @@ const _match_type = (arr, len, pos, role, record) => { // {{{
 		else if (r >= 3 &&
 			arr[pos + 1] == role &&
 			arr[pos + 2] == role &&
-		    arr[pos + 3] == role &&
+			arr[pos + 3] == role &&
 			(l >= 1 || r >= 4)) {
 			for (let i = 0; i <= 3; i ++)
 				record[pos + i] = ALIVE_FOUR;
@@ -155,7 +159,7 @@ const _match_type = (arr, len, pos, role, record) => { // {{{
 }; // }}}
 
 
-const _line_check = (arr, len) => { // {{{
+const line_check = (arr, len) => { // {{{
 	let record_ai = new Array(len).fill(0);
 	let record_player = new Array(len).fill(0);
 
@@ -245,20 +249,26 @@ class Evaluation {
 
 
 	_verital_check() { // {{{
-		let arr;
+		let arr, _record;
 		for (let i = 0; i < 15; i ++) {
 			arr = [];
 			for (let j = 0; j < 15; j ++)
 				arr.push(this.chessboard[j][i]);
 
-			_line_check(arr, 15);
+			_record = _line_check(arr, 15);
+
+			for (let j = 0; j < 15; j ++) {
+				this.point_type[0][VERTICAL][j][i] = _record[0][j];
+				this.point_type[1][VERTICAL][j][i] = _record[1][j];
+			}
 		}
 	} // }}}
 
 
 	_right_diagonal_check() { // {{{
-		let dx = 1, dy = 1, x, y ,arr;
+		let dx = 1, dy = 1, x, y ,arr, _record;
 		for (let i = 0; i <= 10; i ++) {
+			/* lower part */
 			arr = [];
 			x = i, y = 0;
 			for (let j = 0; j < 15 - i; j ++) {
@@ -266,11 +276,19 @@ class Evaluation {
 				x += dx, y += dy;
 			}
 
-			_line_check(arr, 15 - i); // lower part
+			_record = _line_check(arr, 15 - i);
+
+			x = i, y = 0;
+			for (let j = 0; j < 15 - i; j ++) {
+				this.point_type[0][RIGHT_DIAGONAL][x][y] = _record[0][j];
+				this.point_type[1][RIGHT_DIAGONAL][x][y] = _record[1][j];
+				x += dx, y += dy;
+			}
 
 			if (i == 0)
 				continue;
 
+			/* upper part */
 			x = 0, y = i;
 			arr = []
 			for (let j = 0; j < 15 - i; j ++) {
@@ -278,15 +296,23 @@ class Evaluation {
 				x += dx, y += dy;
 			}
 
-			_line_check(arr, 15 - i); // upper part
+			_record = _line_check(arr, 15 - i);
+
+			x = 0, y = i;
+			for (let j = 0; j < 15 - i; j ++) {
+				this.point_type[0][RIGHT_DIAGONAL][x][y] = _record[0][j];
+				this.point_type[1][RIGHT_DIAGONAL][x][y] = _record[1][j];
+				x += dx, y += dy;
+			}
 		}
 	} // }}}
 
 
 	_left_diagonal_check() { // {{{
-		let dx = 1, dy = -1, x, y, arr;
+		let dx = 1, dy = -1, x, y, arr, _record;
 		for (let i = 1; i < 15; i ++) {
 			if (i >= 4) {
+				/* upper part */
 				arr = [];
 				x = 0, y = i;
 				for (let j = 0; j <= i; j ++) {
@@ -294,10 +320,19 @@ class Evaluation {
 					x += dx, y += dy;
 				}
 
-				_line_check(arr, i + 1); // upper part
+				_record = _line_check(arr, i + 1);
+
+				x = 0, y = i;
+				for (let j = 0; j <= i; j ++) {
+					this.point_type[0][LEFT_DIAGONAL][x][y] = _record[0][j];
+					this.point_type[1][LEFT_DIAGONAL][x][y] = _record[1][j];
+					x += dx, y += dy;
+				}
+
 			}
 
 			if (i <= 10) {
+				/* lower part */
 				x = i, y = 14;
 				arr = [];
 				for (let j = 0; j < 15 - i; j ++) {
@@ -305,7 +340,14 @@ class Evaluation {
 					x += dx, y += dy;
 				}
 
-				_line_check(arr, 15 - i); // lower part
+				_record = _line_check(arr, 15 - i);
+
+				x = i, y = 14;
+				for (let j = 0; j < 15 - i; j ++) {
+					this.point_type[0][LEFT_DIAGONAL][x][y] = _record[0][j];
+					this.point_type[1][LEFT_DIAGONAL][x][y] = _record[1][j];
+					x += dx, y += dy;
+				}
 			}
 		}
 	} // }}}
@@ -313,8 +355,6 @@ class Evaluation {
 
 	evaluate(role) {
 		/* init variants */
-		let total = 0;
-
 		this._init_point_type();
 		this._init_point_score();
 		this._init_cnt();
@@ -325,9 +365,56 @@ class Evaluation {
 		this._verital_check();
 		this._left_diagonal_check();
 		this._right_diagonal_check();
+
+
+		/* update cnt */
+		let _, _score;
+		for (let who = 0; who < 2; who ++)
+			for (let i = 0; i < 15; i ++)
+				for (let j = 0; j < 15; j ++) {
+					_score = 0
+					for (let dir = 0; dir < 4; dir ++) {
+						_ = this.point_type[who][dir][i][j]
+
+						if (_ == NONE_TYPE)
+							continue;
+
+						this.cnt[who][_] ++;
+					}
+				}
+
+		/* evaluate this chessboard */
+		let my_score = 0, opp_score = 0;
+		if (role == AI) {
+			if (this.cnt[0][ALIVE_FIVE] > 0)
+				return -INF;
+			else if (this.cnt[1][ALIVE_FIVE] > 0)
+				return INF;
+
+			for (let i = 1; i <= 7; i ++) {
+				my_score += this.cnt[1][i] * ALL_SCORE[i];
+				opp_score += this.cnt[0][i] * ALL_SCORE[i];
+			}
+		}
+		else {
+			if (this.cnt[0][ALIVE_FIVE] > 0)
+				return INF;
+			else if (this.cnt[1][ALIVE_FIVE] > 0)
+				return -INF;
+
+			for (let i = 1; i <= 7; i ++) {
+				my_score += this.cnt[0][i] * ALL_SCORE[i];
+				opp_score += this.cnt[1][i] * ALL_SCORE[i];
+			}
+		}
+
+
+		return my_score - opp_score;
 	}
+
 };
 
 
 
 module.exports.Evaluation = Evaluation;
+module.exports.line_check = line_check;
