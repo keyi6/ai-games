@@ -1,13 +1,14 @@
-const INF = 268435456;
-
-
-
-
+let E = require('./evaluation.js')
+let Evaluation = E.Evaluation;
+let evaluate_point = E.evaluate_point;
 
 /* for identity representation */
 const AI     = 1;
 const PLAYER = -1;
 const TIE    = 0;
+
+/* for point evaluation */
+const POINT_SCORE = [0, 10, 100, 1000, 10, 100, 1000, 1000, 10000];
 
 
 /* golbal var */
@@ -19,6 +20,7 @@ let g_next_move;   // next move, n x 2
 
 /* configuration */
 let max_depth = 3;
+
 
 const _init_chessboard = () => { // {{{
 	this.chessboard = new Array();
@@ -42,6 +44,11 @@ const _random_int = (x) => { // get random int [0, x) // {{{
 }; // }}}
 
 
+const _abs = (x) => { // {{{
+	return x > 0 ? x : -x;
+}; // }}}
+
+
 const win_check = () => {
 };
 
@@ -57,17 +64,12 @@ const ai_move = (chessboard) => { //{{{
 }; // }}}
 
 
-const _generagte_available_points = () => {
-};
-
-
-
 const _negamax = (role, depth, alpha, beta) => { // {{{
 	let e = new Evaluation(g_chessboard);
 	if (depth <= 0 || win_check())
 		return e.evaluation(role);
 
-	search_list = _generagte_available_points();
+	search_list = e.generagte_available_points(role);
 	for (i in search_list) {
 		g_search_cnt ++;
 		let x = search_list[i][0], y = search_list[i][1];
@@ -93,7 +95,6 @@ const _negamax = (role, depth, alpha, beta) => { // {{{
 
 
 /*
-module.exports.is_full = is_full;
 module.exports.win_check= win_check;
 */
 
