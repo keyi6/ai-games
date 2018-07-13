@@ -5,28 +5,14 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
+    font-size: x-small;
+    margin: 0;
 }
 
 .chessboard {
     display:inline-block;
     vertical-align:middle;
-}
-
-.gird {
-    display: inline-block;
-    overflow: hidden;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-}
-
-.row {
-    display: block;
-    border: 0;
-    margin: 0;
-}
-
-.chess {
-    text-align: center;
 }
 
 .status {
