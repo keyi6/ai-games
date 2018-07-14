@@ -4,6 +4,9 @@
 	"private": true,
 	"main": "main.js",
 	"homepage": "https://cjhahaha.github.io/ai-games/",
+	"devDependencies": {
+		"gh-pages": "^1.7.0"
+	},
 	"dependencies": {
 		"antd": "^3.6.5",
 		"electron": "^2.0.4",
@@ -16,6 +19,10 @@
 		"build": "react-scripts build",
 		"test": "react-scripts test --env=jsdom",
 		"eject": "react-scripts eject",
-		"electron-start": "electron ."
+		"electron-start": "electron .",
+		"deploy": "gh-pages -d build"
+	},
+	"devDependencies": {
+		"gh-pages": "^1.2.0"
 	}
 }
