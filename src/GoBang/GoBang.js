@@ -142,7 +142,7 @@ class GoBang extends React.Component {
                     chessboard: t,
                     clickStatus: -this.state.clickStatus
                 });
-            }, 3);
+            }, 10);
         }
     };
 
@@ -216,7 +216,7 @@ class GoBang extends React.Component {
                 />
 
                 <div className="info" style={{
-                    top: Math.round(HEIGHT * 0.80).toString() + 'px',
+                    top: Math.round(HEIGHT * 0.78).toString() + 'px',
                     left: 0,
                     width: WIDTH.toString() + 'px'
                 }}>
@@ -233,17 +233,16 @@ class GoBang extends React.Component {
                 </div>
 
                 <div className="status" style={{
-                    position: 'absolute',
-                    width: BOARD_SIZE.toString() + 'px',
+                    width: WIDTH.toString() + 'px',
                     top: Math.round(HEIGHT * 0.89).toString() + 'px',
                     lineHeight: '35px'
                 }}>
                     <Row>
-                        <Col span={10}>
+                        <Col offset={7} span={5}>
                             Search depth setting
                         </Col>
 
-                        <Col span={14}>
+                        <Col span={5}>
                             <Slider defaultValue={3} max={5} min={1} onChange={this.handleSlide} />
                         </Col>
                     </Row>
