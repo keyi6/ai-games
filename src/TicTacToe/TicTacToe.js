@@ -134,7 +134,7 @@ class TicTacToe extends React.Component {
                 result: 'Let\'s play again!'
             });
 
-            if (this.state.firstHand == AI)
+            if (this.state.firstHand === AI)
                 this.randomStart();
         }
     };
@@ -151,7 +151,7 @@ class TicTacToe extends React.Component {
         new_displayboard[pos] = '❌';                                      // update displayBoard
 
         this.setState({                                                    // update state
-            result: 'Let\'s play again!',
+            result: 'Let\'s play!',
             chessboard: new_chessboard,
             displayBoard: new_displayboard,
             clickStatus: PLAYER
@@ -173,7 +173,7 @@ class TicTacToe extends React.Component {
                     displayBoard: ['', '', '', '', '', '', '', '', ''],
                 });
         }
-    }
+    };
 
 
     render() {                                                             // html
@@ -240,15 +240,17 @@ class TicTacToe extends React.Component {
                         </td>
                     </tr>
 
-
-                    <div className="status" style={{ fontSize: FONT_SIZE }} onClick={this.handleClickMsg}>
-                        {this.state.result}
-                    </div>
-
+                </table>
                     <div className="status">
                         You &nbsp; <Switch defaultChecked onChange={this.handleSwitch} /> &nbsp; AI go first.
                     </div>
-                </table></div>
+                    <br/>
+                    <div className="status" style={{ fontSize: FONT_SIZE }} onClick={this.handleClickMsg}>
+                        {this.state.result}
+                    </div>
+                    </div>
+
+
             </div>
         )
     }

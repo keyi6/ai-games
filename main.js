@@ -2,10 +2,10 @@ const {app, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
 
-let mainWindow
+let mainWindow;
 
 const createWindow = () => {
-	mainWindow = new BrowserWindow({width: 800, height: 600})
+	mainWindow = new BrowserWindow({width: 800, height: 465});
 
 	mainWindow.loadURL('http://localhost:3000/');
 
