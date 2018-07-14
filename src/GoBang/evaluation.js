@@ -19,7 +19,7 @@ const THREE_FOUR  = 10
 const DB_FOUR     = 11;
 
 const INF = 268435456;
-const SCORE = [0, 10, 39, 77, 11, 41, 1000, 1000000, INF];
+const SCORE = [0, 10, 39, 77, 11, 41, 1000, INF / 2, INF];
 
 
 /* for direction */
@@ -170,12 +170,16 @@ const _match_type = (arr, len, pos, role, record) => {
 const _line_check = (arr, len) => {
     let record_ai = new Array(len).fill(0);
     let record_player = new Array(len).fill(0);
+    let _record;
 
     for (let i = 0; i < len; i ++) {
-        if (record_ai[i] === 0)
-            record_ai = _match_type(arr, len, i, AI, record_ai);
-        if (record_player[i] === 0)
-            record_player = _match_type(arr, len, i, PLAYER, record_player);
+        _record = _match_type(arr, len, i, AI, record_ai);
+        for (let j = 0; j < len; j ++)
+            record_ai[j] = SCORE[record_ai[j]] < SCORE[_record[j]] ? _record[j] : record_ai[j];
+
+       _record = _match_type(arr, len, i, PLAYER, record_player);
+        for (let j = 0; j < len; j ++)
+            record_player[j] = SCORE[record_player[j]] < SCORE[_record[j]] ? _record[j] : record_player[j];
     }
 
     return [record_player, record_ai];
@@ -246,7 +250,7 @@ class Evaluation {
     }
 
 
-    vertical_check() {
+    _vertical_check() {
         let arr, _record;
         for (let i = 0; i < 15; i ++) {
             arr = [];
@@ -268,19 +272,19 @@ class Evaluation {
         for (let i = 0; i <= 10; i ++) {
             /* lower part */
             arr = [];
-            x = i, y = 0;
+            x = i; y = 0;
             for (let j = 0; j < 15 - i; j ++) {
                 arr.push(this.chessboard[x][y]);
-                x += dx, y += dy;
+                x += dx; y += dy;
             }
 
             _record = _line_check(arr, 15 - i);
 
-            x = i, y = 0;
+            x = i; y = 0;
             for (let j = 0; j < 15 - i; j ++) {
                 this.point_type[0][RIGHT_DIAGONAL][x][y] = _record[0][j];
                 this.point_type[1][RIGHT_DIAGONAL][x][y] = _record[1][j];
-                x += dx, y += dy;
+                x += dx; y += dy;
             }
 
             if (i === 0)
@@ -288,19 +292,19 @@ class Evaluation {
 
             /* upper part */
             x = 0, y = i;
-            arr = []
+            arr = [];
             for (let j = 0; j < 15 - i; j ++) {
                 arr.push(this.chessboard[x][y]);
-                x += dx, y += dy;
+                x += dx; y += dy;
             }
 
             _record = _line_check(arr, 15 - i);
 
-            x = 0, y = i;
+            x = 0; y = i;
             for (let j = 0; j < 15 - i; j ++) {
                 this.point_type[0][RIGHT_DIAGONAL][x][y] = _record[0][j];
                 this.point_type[1][RIGHT_DIAGONAL][x][y] = _record[1][j];
-                x += dx, y += dy;
+                x += dx; y += dy;
             }
         }
     }
@@ -312,15 +316,15 @@ class Evaluation {
             if (i >= 4) {
                 /* upper part */
                 arr = [];
-                x = 0, y = i;
+                x = 0; y = i;
                 for (let j = 0; j <= i; j ++) {
                     arr.push(this.chessboard[x][y]);
-                    x += dx, y += dy;
+                    x += dx; y += dy;
                 }
 
                 _record = _line_check(arr, i + 1);
 
-                x = 0, y = i;
+                x = 0; y = i;
                 for (let j = 0; j <= i; j ++) {
                     this.point_type[0][LEFT_DIAGONAL][x][y] = _record[0][j];
                     this.point_type[1][LEFT_DIAGONAL][x][y] = _record[1][j];
@@ -340,11 +344,11 @@ class Evaluation {
 
                 _record = _line_check(arr, 15 - i);
 
-                x = i, y = 14;
+                x = i; y = 14;
                 for (let j = 0; j < 15 - i; j ++) {
                     this.point_type[0][LEFT_DIAGONAL][x][y] = _record[0][j];
                     this.point_type[1][LEFT_DIAGONAL][x][y] = _record[1][j];
-                    x += dx, y += dy;
+                    x += dx; y += dy;
                 }
             }
         }
@@ -360,7 +364,7 @@ class Evaluation {
 
         /* check four directions */
         this._horizontal_check();
-        this.vertical_check();
+        this._vertical_check();
         this._left_diagonal_check();
         this._right_diagonal_check();
 
@@ -390,8 +394,8 @@ class Evaluation {
                 return INF;
 
             for (let i = 1; i <= 7; i ++) {
-                my_score += this.cnt[1][i] * SCORE[i];
-                opp_score += this.cnt[0][i] * SCORE[i];
+                my_score += ((this.cnt[1][i] - 1) / 10 + 1) * SCORE[i];
+                opp_score += ((this.cnt[0][i] - 1) / 10 + 1) * SCORE[i];
             }
         }
         else {
@@ -421,9 +425,10 @@ class Evaluation {
             ny = y + DY[i];
 
             if (0 <= nx && nx < 15 && 0 <= ny && ny < 15 && t[nx][ny] !== 0)
-                score += 4;
+                score += 10;
         }
 
+        /*
         let l, r, arr = [];
         for (let i = 0; i < 4; i++) {
             l = r = 0;
@@ -457,6 +462,7 @@ class Evaluation {
             else if (role === PLAYER && SCORE[_record_1[0][l - 1]] < SCORE[0][l - 1])
                 score += SCORE[_record_2[0][l - 1]];
         }
+        */
 
         return score;
     }
@@ -464,11 +470,12 @@ class Evaluation {
 
     generate_available_points(role) {
         let point_score = [];
+        let t = this.chessboard;
 
         /* evaluate points */
         for (let i = 0; i < 15; i ++)
             for (let j = 0; j < 15; j ++)
-                if (this.chessboard[i][j] === 0)
+                if (t[i][j] === 0)
                     point_score.push({
                         score: this._evaluate_point(i, j, role),
                         point: [i, j]

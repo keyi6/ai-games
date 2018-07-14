@@ -21,7 +21,7 @@ let g_next_move;   // next move, n x 2
 
 
 /* configuration */
-let max_depth = 1;
+let max_depth = 3;
 
 
 const _init_g_chessboard = () => {
@@ -56,7 +56,6 @@ const _negamax = (role, depth, alpha, beta) => {
 		return e.evaluate_chessboard(role);
 
 	let search_list = e.generate_available_points(role);
-	console.log(search_list);
 	for (let i in search_list) {
 		g_search_cnt ++;
 		let x = search_list[i].point[0];
@@ -89,8 +88,7 @@ const ai_move = (chessboard) => { //{{{
 
     let score = _negamax(AI, max_depth, -INF, INF);
 
-    console.log(g_next_move);
-    return g_next_move[0];
+    return [g_next_move[0], g_search_cnt, g_cut_cnt, score];
 };
 
 /*

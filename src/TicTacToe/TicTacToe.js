@@ -30,7 +30,7 @@ const UPPER_HEIGHT = GIRD_HEIGHT + BORDER_SIZE;
 const MIDDLE_HEIGHT = GIRD_HEIGHT + 2 * BORDER_SIZE;
 
 /* for design */
-const COLOR_ROW = ['#606470', '#7BCECC', '#F9CE00', '#4CAF50', '#FF9800']; // background color
+const COLOR_ROW = ['#606470', '#3c79ce', '#F9CE00', '#4CAF50', '#FF9800'];       // background color
 
 
 class TicTacToe extends React.Component {

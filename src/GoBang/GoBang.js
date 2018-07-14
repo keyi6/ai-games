@@ -1,9 +1,10 @@
 import React from 'react';
-import { Switch } from 'antd';
+import { Switch, Slider, Col, Row } from 'antd';
 import './GoBang.css';
 
 let A = require('./negamax');
 let ai_move = A.ai_move;
+let set_depth = A.set_max_depth;
 
 /* for chessboard */
 const AI = 1;
@@ -15,18 +16,14 @@ const CANNOT_CLICK = 0;
 const HEIGHT = window.innerHeight;
 const WIDTH = window.innerWidth;
 const BASE = HEIGHT < WIDTH ? HEIGHT : WIDTH;
-const BOARD_SIZE = BASE * 0.5;
-const CHESS_SIZE = (BASE / 7).toString() + 'px';
-const FONT_SIZE = (BASE / 15).toString() + 'px';
+const BOARD_SIZE = BASE * 0.6;
 
-
-const MARGIN_U = ((HEIGHT- BOARD_SIZE) / 2).toString() + 'px';
+const MARGIN_U = ((HEIGHT - BOARD_SIZE) / 2).toString() + 'px';
 const MARGIN_L = ((WIDTH - BOARD_SIZE) / 2).toString() + 'px';
-const SIZE = BOARD_SIZE.toString() + 'px';
 
 
 const RATE = Math.round(BOARD_SIZE / 15);
-const OFFSET = Math.ceil((BOARD_SIZE - RATE * 14) / 2);
+const OFFSET = Math.ceil((BOARD_SIZE - RATE * 14) * 0.5);
 const RADIUS = RATE * 0.4;
 
 
@@ -34,7 +31,7 @@ const RADIUS = RATE * 0.4;
 const COLOR_ROW = ['#606470', '#3c79ce', '#F9CE00', '#4CAF50', '#FF9800'];       // background color
 
 let ctx;
-
+let cut_cnt, search_cnt, score;
 
 class GoBang extends React.Component {
     state = {
@@ -43,7 +40,9 @@ class GoBang extends React.Component {
         clickStatus: AI,                                                         // 0 -> nobody move, 1 -> ai move, 2 -> human move
         firstHand: AI,                                                           // who plays first
         result: 'Let\'s play!',                                                // help text
-        cnt: 0
+        cnt: 0,
+        cur_pos_x: 0,
+        cur_pos_y: 0
     };
 
 
@@ -127,25 +126,36 @@ class GoBang extends React.Component {
 
         let t = this.state.chessboard;
         if (t[nx][ny] === 0) {
-            console.log('clicked! drawing...');
             this.draw(nx, ny, this.state.cnt);
-            console.log('drawed!')
-
             t[nx][ny] = PLAYER;
 
+            setTimeout(() => {
+                let p = ai_move(t);
+                search_cnt = p[1];
+                cut_cnt = p[2];
+                score = p[3];
+                t[p[0][0]][p[0][1]] = AI;
+                this.draw(p[0][0], p[0][1], this.state.cnt + 1);
 
-            let p = ai_move(t);
-
-            t[p[0]][p[1]] = AI;
-            this.draw(p[0], p[1], this.state.cnt + 1);
-
-            this.setState({
-                cnt: this.state.cnt + 2,
-                chessboard: t,
-                clickStatus: -this.state.clickStatus
-            });
-
+                this.setState({
+                    cnt: this.state.cnt + 2,
+                    chessboard: t,
+                    clickStatus: -this.state.clickStatus
+                });
+            }, 3);
         }
+    };
+
+
+    handleMove = (e) => {
+        let x = e.clientX - OFFSET - (WIDTH - BOARD_SIZE) / 2;
+        let y = e.clientY - OFFSET - (HEIGHT - BOARD_SIZE) / 2;
+        x = Math.round(x / RATE);
+        y = Math.round(y / RATE);
+        this.setState({
+            cur_pos_x: x,
+            cur_pos_y: y
+        });
     };
 
 
@@ -163,40 +173,25 @@ class GoBang extends React.Component {
 
 
     randomStart = () => {                                                        // random start a new game
-        let pos = Math.round(Math.random() * 863) % 9;
-        let x = (pos - pos % 3) / 3, y = pos % 3;
-
-        let new_chessboard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-            new_displayboard = ['', '', '', '', '', '', '', '', ''];
-
-        new_chessboard[x][y] = AI;                                               // update chessboard
-        new_displayboard[pos] = '❌';                                            // update displayBoard
-
-        this.setState({                                                          // update state
-            result: 'Let\'s play again!',
-            chessboard: new_chessboard,
-            displayBoard: new_displayboard,
-            clickStatus: PLAYER
+        this.draw(7, 7, 0);
+        let t = this.state.chessboard;
+        t[7][7] = AI;
+        this.setState({
+            chessboard: t,
+            cnt: 1
         });
-
     };
 
 
     handleSwitch = (checked) => {                                                // switch first hand
+        if (checked && this.state.cnt === 0)
+            this.randomStart();
         this.setState({ firstHand: checked ? AI : PLAYER });
+    };
 
-        /*
-        if (is_just_started(this.state.chessboard)) {
-            if (checked)
-                this.randomStart();                                              // random start a new game
-            else
-                this.setState({                                                  // clear, let PLAYER play
-                    clickStatus: this.state.firstHand,
-                    chessboard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-                    displayBoard: ['', '', '', '', '', '', '', '', ''],
-                });
-        }
-        */
+
+    handleSlide = (v) => {
+        set_depth(v);
     };
 
 
@@ -204,20 +199,56 @@ class GoBang extends React.Component {
         return (
             <div className="container"
                  style={{
-                    height: HEIGHT.toString() + 'px',
+                    height: (HEIGHT + 1).toString() + 'px',
                     width: WIDTH.toString() + 'px',
                     backgroundColor: COLOR_ROW[this.state.colorIdx]
                 }}
             >
 
                 <canvas id="board"
-                        onClick={this.handleClick}
+                        onClick={ this.handleClick }
+                        onMouseMove={ this.handleMove }
                         style={{
                             position: 'absolute',
                             top: MARGIN_U,
                             left: MARGIN_L
                         }}
                 />
+
+                <div className="info" style={{
+                    top: Math.round(HEIGHT * 0.80).toString() + 'px',
+                    left: 0,
+                    width: WIDTH.toString() + 'px'
+                }}>
+                    clicking at [{ this.state.cur_pos_x }, { this.state.cur_pos_y }]
+                    search: { search_cnt }, cut: { cut_cnt }, score: { score }
+                </div>
+
+                <div className="status" style={{
+                    top: Math.round(HEIGHT * 0.85).toString() + 'px',
+                    width: WIDTH.toString()
+                }}>
+                    You &nbsp; <Switch onChange={this.handleSwitch} /> &nbsp; AI go first.
+
+                </div>
+
+                <div className="status" style={{
+                    position: 'absolute',
+                    width: BOARD_SIZE.toString() + 'px',
+                    top: Math.round(HEIGHT * 0.89).toString() + 'px',
+                    lineHeight: '35px'
+                }}>
+                    <Row>
+                        <Col span={10}>
+                            Search depth setting
+                        </Col>
+
+                        <Col span={14}>
+                            <Slider defaultValue={3} max={5} min={1} onChange={this.handleSlide} />
+                        </Col>
+                    </Row>
+
+                </div>
             </div>
         )
     }
