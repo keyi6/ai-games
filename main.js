@@ -7,7 +7,7 @@ let mainWindow;
 const createWindow = () => {
 	mainWindow = new BrowserWindow({width: 800, height: 465});
 
-	mainWindow.loadURL('http://localhost:3000/');
+	mainWindow.loadURL('http://cjhahaha.github.io/ai-games/');
 
 	mainWindow.on('closed', function () {
 		mainWindow = null

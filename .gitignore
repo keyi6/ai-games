@@ -26,3 +26,6 @@ yarn-error.log*
 # WebStorm
 /.idea
 *.swp
+
+# electron
+/presenterTool
