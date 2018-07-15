@@ -3,6 +3,7 @@ let Evaluation = E.Evaluation;
 
 
 const INF = 2684354564;
+const ALIVE_FIVE  = 8;
 
 /* for identity representation */
 const AI     = 1;
@@ -46,13 +47,23 @@ const _random_int = (x) => { // get random int [0, x)
 };
 
 
-const win_check = () => {
+const win_check = (chessboard) => {
+	let e = new Evaluation(chessboard);
+	console.log(e.chessboard)
+	e.evaluate_chessboard(AI);
+
+	if (e.cnt[0][ALIVE_FIVE] > 0)
+		return PLAYER;
+	else if (e.cnt[1][ALIVE_FIVE] > 0)
+		return AI;
+
+	return 0;
 };
 
 
 const _negamax = (role, depth, alpha, beta) => {
 	let e = new Evaluation(g_chessboard);
-	if (depth <= 0 || win_check())
+	if (depth <= 0 || win_check(g_chessboard) !== 0)
 		return e.evaluate_chessboard(role);
 
 	let search_list = e.generate_available_points(role);
@@ -81,20 +92,18 @@ const _negamax = (role, depth, alpha, beta) => {
 };
 
 
-const ai_move = (chessboard) => { //{{{
+const ai_move = (chessboard) => {
     g_chessboard = chessboard;
     g_next_move = [];
     g_search_cnt = g_cut_cnt = 0; // init counters
 
     let score = _negamax(AI, max_depth, -INF, INF);
 
-    return [g_next_move[0], g_search_cnt, g_cut_cnt, score];
+    return [g_next_move.pop(), g_search_cnt, g_cut_cnt, score];
 };
 
-/*
-module.exports.win_check= win_check;
-*/
 
 module.exports.ai_move = ai_move;
+module.exports.win_check = win_check;
 module.exports.set_max_depth = set_max_depth;
 module.exports.start_game = start_game;

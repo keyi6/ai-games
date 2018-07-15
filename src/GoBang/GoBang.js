@@ -4,6 +4,7 @@ import './GoBang.css';
 
 let A = require('./negamax');
 let ai_move = A.ai_move;
+let win_check = A.win_check;
 let set_depth = A.set_max_depth;
 
 /* for chessboard */
@@ -41,6 +42,7 @@ class GoBang extends React.Component {
         firstHand: AI,                                                           // who plays first
         result: 'Let\'s play!',                                                // help text
         cnt: 0,
+		end: true,
         cur_pos_x: 0,
         cur_pos_y: 0
     };
@@ -105,7 +107,7 @@ class GoBang extends React.Component {
 
     handleWin = () => {                                                          // if player win, display message and reset game
         this.setState({
-            clickStatus: 0,
+			end: true,
             result: 'Good for you!🤘'
         });
     };
@@ -113,7 +115,7 @@ class GoBang extends React.Component {
 
     handleLose = () => {                                                         // if player lose, display message and reset game
         this.setState({
-            clickStatus: 0,
+			end: true,
             result: 'Loser comes to bite me🤪'
         });
     };
@@ -124,10 +126,13 @@ class GoBang extends React.Component {
         let y = e.clientY - OFFSET - (HEIGHT - BOARD_SIZE) / 2;
         let nx = Math.round(x / RATE), ny = Math.round(y / RATE);
 
-        let t = this.state.chessboard;
+        let t = this.state.chessboard, q;
         if (t[nx][ny] === 0) {
             this.draw(nx, ny, this.state.cnt);
             t[nx][ny] = PLAYER;
+
+			q = win_check(t);
+			if (q == PLAYER) { this.handleWin();  return; }
 
             setTimeout(() => {
                 let p = ai_move(t);
@@ -136,12 +141,16 @@ class GoBang extends React.Component {
                 score = p[3];
                 t[p[0][0]][p[0][1]] = AI;
                 this.draw(p[0][0], p[0][1], this.state.cnt + 1);
+				
 
                 this.setState({
                     cnt: this.state.cnt + 2,
                     chessboard: t,
                     clickStatus: -this.state.clickStatus
                 });
+
+				q = win_check(t);
+				if (q == AI) { this.handleLose();  return; }
             }, 10);
         }
     };
@@ -178,7 +187,8 @@ class GoBang extends React.Component {
         t[7][7] = AI;
         this.setState({
             chessboard: t,
-            cnt: 1
+            cnt: 1,
+			end: false
         });
     };
 
@@ -220,6 +230,7 @@ class GoBang extends React.Component {
                     left: 0,
                     width: WIDTH.toString() + 'px'
                 }}>
+					{this.state.end ? this.state.result : null}
                     clicking at [{ this.state.cur_pos_x }, { this.state.cur_pos_y }]
                     search: { search_cnt }, cut: { cut_cnt }, score: { score }
                 </div>
@@ -251,7 +262,7 @@ class GoBang extends React.Component {
             </div>
         )
     }
-
 }
+
 
 export default GoBang
