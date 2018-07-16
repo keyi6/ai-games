@@ -86,15 +86,23 @@ class GoBang extends React.Component {
         let ny = y * RATE + OFFSET;
 
         if (turn % 2 === 0)
-            ctx.fillStyle= " #000";
-        else
             ctx.fillStyle= " #FFF";
+        else
+            ctx.fillStyle= " #000";
 
         ctx.beginPath();
         ctx.arc(nx, ny, RADIUS, 0, Math.PI * 2, true);
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
+
+
+        if (turn % 2 === 0)
+            ctx.fillStyle= " #000";
+        else
+            ctx.fillStyle= " #FFF";
+
+		ctx.fillText(turn.toString(), nx, ny);
     };
 
     handleTie = () => {                                                          // if tie, display message and reset game
@@ -128,7 +136,7 @@ class GoBang extends React.Component {
 
         let t = this.state.chessboard, q;
         if (t[nx][ny] === 0) {
-            this.draw(nx, ny, this.state.cnt);
+            this.draw(nx, ny, this.state.cnt + 1);
             t[nx][ny] = PLAYER;
 
 			q = win_check(t);
@@ -140,7 +148,7 @@ class GoBang extends React.Component {
                 cut_cnt = p[2];
                 score = p[3];
                 t[p[0][0]][p[0][1]] = AI;
-                this.draw(p[0][0], p[0][1], this.state.cnt + 1);
+                this.draw(p[0][0], p[0][1], this.state.cnt + 2);
 				
 
                 this.setState({
