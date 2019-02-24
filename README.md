@@ -2,22 +2,13 @@
 
 
 
-## 实验简介
+[在线试玩 demo](http://cjhahaha.github.io/ai-games/) 
 
-​        自从AlphaGo、AlphaZero、AlphaZeroGo的问世，从蒙特卡洛树搜索到强化学习，棋类AI越来越厉害。本次实验使用了博弈树上的极大极小值搜索、Alpha-Beta剪枝和启发式搜索，实现了两个简单的棋类AI——井子棋和五子棋。
-
-
-
-## 实验目的
-
- - 掌握极大极小值搜索算法
- - 掌握Negamax搜索算法
- - 掌握$\alpha-\beta$剪枝算法
- - 熟悉使用React.js与Electron发布跨平台应用
+![preview](./preview.gif)
 
 
 
-## 实验相关原理与技术
+## 相关原理与技术
 
 ### 算法
 
@@ -186,9 +177,7 @@
 
 
 
-## 实验方案与过程
-
-### 方案
+## 方案
 
 1. 井字棋AI  Tic-Tac-Toe
 
@@ -217,12 +206,3 @@
 
 
 
-### 过程
-
-
-
-
-
-
-
-## 实验总结
