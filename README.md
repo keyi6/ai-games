@@ -2,9 +2,9 @@
 
 
 
-[在线试玩 demo](http://cjhahaha.github.io/ai-games/) 
+[demo](http://cjhahaha.github.io/ai-games/) 
 
-![preview](./preview.gif)
+![preview](./img/preview.gif)
 
 
 
@@ -201,8 +201,5 @@
    
 
 2. 五子棋 AI GoBang
-
 ![gobang](./img/gobang.svg)
-
-
 
