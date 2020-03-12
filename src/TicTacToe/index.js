@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch } from 'antd';
-import './TicTacToe.css';
+import './index.css';
 
 /* import functions */
 let _ = require('./minimax.js')
@@ -33,7 +33,7 @@ const MIDDLE_HEIGHT = GIRD_HEIGHT + 2 * BORDER_SIZE;
 const COLOR_ROW = ['#606470', '#3c79ce', '#F9CE00', '#4CAF50', '#FF9800'];       // background color
 
 
-class TicTacToe extends React.Component {
+class Index extends React.Component {
     state = {
         chessboard: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],                     // chessboard
         displayBoard: ['', '', '', '', '', '', '', '', ''],                // display board
@@ -257,4 +257,4 @@ class TicTacToe extends React.Component {
 
 }
 
-export default TicTacToe
+export default Index

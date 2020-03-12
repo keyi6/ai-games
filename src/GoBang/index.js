@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Slider, Col, Row } from 'antd';
-import './GoBang.css';
+import './index.css';
 
 let A = require('./negamax');
 let ai_move = A.ai_move;
@@ -29,18 +29,18 @@ const RADIUS = RATE * 0.4;
 
 
 /* for design */
-const COLOR_ROW = ['#606470', '#3c79ce', '#F9CE00', '#4CAF50', '#FF9800'];       // background color
+const COLOR_ROW = ['#606470', '#3c79ce', '#F9CE00', '#4CAF50', '#FF9800'];
 
 let ctx;
 let cut_cnt, search_cnt, score;
 
-class GoBang extends React.Component {
+class Index extends React.Component {
     state = {
-        colorIdx: 0,                                                             // background color index
-        chessboard: [],  // chessboard
-        clickStatus: AI,                                                         // 0 -> nobody move, 1 -> ai move, 2 -> human move
-        firstHand: AI,                                                           // who plays first
-        result: 'Let\'s play!',                                                // help text
+        colorIdx: 0,
+        chessboard: [],
+        clickStatus: AI,
+        firstHand: AI,
+        result: 'Let\'s play!',
         cnt: 0,
 		end: true,
         cur_pos_x: 0,
@@ -105,7 +105,7 @@ class GoBang extends React.Component {
 		ctx.fillText(turn.toString(), nx, ny);
     };
 
-    handleTie = () => {                                                          // if tie, display message and reset game
+    handleTie = () => {
         this.setState({
             clickStatus: 0,
             result: 'Tie🤷‍️'
@@ -113,7 +113,7 @@ class GoBang extends React.Component {
     };
 
 
-    handleWin = () => {                                                          // if player win, display message and reset game
+    handleWin = () => {
         this.setState({
 			end: true,
             result: 'Good for you!🤘'
@@ -121,7 +121,7 @@ class GoBang extends React.Component {
     };
 
 
-    handleLose = () => {                                                         // if player lose, display message and reset game
+    handleLose = () => {
         this.setState({
 			end: true,
             result: 'Loser comes to bite me🤪'
@@ -129,7 +129,7 @@ class GoBang extends React.Component {
     };
 
 
-    handleClick = (e) => {                                                     // when player places chess
+    handleClick = (e) => {
         let x = e.clientX - OFFSET - (WIDTH - BOARD_SIZE) / 2;
         let y = e.clientY - OFFSET - (HEIGHT - BOARD_SIZE) / 2;
         let nx = Math.round(x / RATE), ny = Math.round(y / RATE);
@@ -189,7 +189,7 @@ class GoBang extends React.Component {
     };
 
 
-    randomStart = () => {                                                        // random start a new game
+    randomStart = () => {
         this.draw(7, 7, 0);
         let t = this.state.chessboard;
         t[7][7] = AI;
@@ -201,7 +201,7 @@ class GoBang extends React.Component {
     };
 
 
-    handleSwitch = (checked) => {                                                // switch first hand
+    handleSwitch = (checked) => {
         if (checked && this.state.cnt === 0)
             this.randomStart();
         this.setState({ firstHand: checked ? AI : PLAYER });
@@ -213,7 +213,7 @@ class GoBang extends React.Component {
     };
 
 
-    render() {                                                                   // html
+    render() {
         return (
             <div className="container"
                  style={{
@@ -273,4 +273,4 @@ class GoBang extends React.Component {
 }
 
 
-export default GoBang
+export default Index
