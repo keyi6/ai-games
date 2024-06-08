@@ -1,26 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { HomePage, TicTacToePage, GomokuPage } from './pages';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const router = createBrowserRouter([
+    {
+        path: "/tic-tac-toe",
+        element: <TicTacToePage />,
+    },
+    {
+        path: "/gomoku",
+        element: <GomokuPage />
+    },
+    {
+        path: "/",
+        element: <HomePage />
+    },
+]);
 
-export default App;
+export const App = () => {
+    return (
+        <RouterProvider router={router} />
+    );
+};
