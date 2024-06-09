@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
+import { Board, IBoardRef } from "./board";
 
 export const TicTacToePage = () => {
+    const ref = useRef<IBoardRef>(null);
     return (
-        <div>Tic Tac Toe</div>
+        <Board ref={ref} />
     );
 };
