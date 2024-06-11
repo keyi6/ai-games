@@ -1,28 +1,34 @@
 import { useState, useCallback, useMemo } from "react";
-import { IMove, Status } from "../interfaces/game.interfaces";
+import { GameStatus, IMove, CellStatus } from "../interfaces/game.interfaces";
 
-function checkRow(arr: Status[], winningCount: number): Status {
-    if (arr.length < winningCount) return Status.Blank;
-    for (let i = 0; i + winningCount < arr.length; i ++) {
-        if (arr[i] === Status.Blank) continue;
+function checkRow(arr: CellStatus[], winningCount: number): GameStatus {
+    if (arr.length < winningCount) return GameStatus.OnGoing;
+    for (let i = 0; i + winningCount <= arr.length; i ++) {
+        if (arr[i] === CellStatus.Blank) continue;
 
-        const flag = arr.slice(i + 1, i + winningCount).every(x => x === arr[i]);
-        if (flag) return arr[i];
+        if (arr.slice(i + 1, i + winningCount).every(x => x === arr[i])) {
+            console.debug("Matched", arr);
+            return arr[i] as unknown as GameStatus;
+        }
     }
-    return Status.Blank;
+
+    return GameStatus.OnGoing;
 }
 
 export function check(
-    bitmap: Status[][],
+    bitmap: CellStatus[][],
     row: number,
     column: number,
     winningCount: number,
-): Status {
+): GameStatus {
     // add rows
-    const arrays: Status[][] = [...bitmap];
+    const arrays: CellStatus[][] = [...bitmap];
+
     // add columns
     for (let i = 0; i < column; i ++) {
-        arrays.push(new Array(row).map((_, j) => bitmap[j][i]));
+        arrays.push(new Array(row)
+            .fill(0)
+            .map((_, j) => bitmap[j][i]));
     }
 
     for (let i = 0; i < column; i ++) {
@@ -63,11 +69,14 @@ export function check(
 
     const results = arrays
         .map(arr => checkRow(arr, winningCount))
-        .filter(x => x !== Status.Blank);
-    return results.length ? results[0] : Status.Blank;
+        .filter(x => x !== GameStatus.OnGoing);
+    if (results.length) return results[0];
+
+    if (bitmap.some(row => row.some(c => c === CellStatus.Blank))) return GameStatus.OnGoing;
+    return GameStatus.Tie;
 }
 
-export const useBoardGame = (row: number, column: number, winningCount: number) => {
+export function useBoardGame(row: number, column: number, winningCount: number) {
     const [seq, setSeq] = useState<number>(0);
     const [moves, setMoves] = useState<IMove[]>([]);
     const [player, setPlayer] = useState<boolean>(true);
@@ -75,24 +84,24 @@ export const useBoardGame = (row: number, column: number, winningCount: number) 
     const placeChess = useCallback((x: number, y: number) => {
         setMoves(pre => [...pre, {
             x, y, seq,
-            status: player ? Status.Player1 : Status.Player2,
+            status: player ? CellStatus.Player1 : CellStatus.Player2,
         }]);
         setSeq(pre => pre + 1);
         setPlayer(pre => !pre);
     }, [seq, player]);
 
-    const bitmap = useMemo<Status[][]>(() => {
+    const bitmap = useMemo<CellStatus[][]>(() => {
         const ret = new Array(row)
             .fill(0)
-            .map(_ => new Array(column).fill(Status.Blank));
+            .map(_ => new Array(column).fill(CellStatus.Blank));
         moves.forEach(({ x, y, status }) => ret[x][y] = status);
         return ret;
     }, [moves, column, row]);
 
-    const gameStatus = useMemo<Status>(
+    const gameStatus = useMemo<GameStatus>(
         () => check(bitmap, row, column, winningCount),
         [bitmap, row, column, winningCount],
     );
 
     return { bitmap, placeChess, gameStatus };
-};
+}

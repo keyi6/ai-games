@@ -1,7 +1,7 @@
 import React, {
-    FunctionComponent, forwardRef, useImperativeHandle, useMemo, useRef,
+    FunctionComponent, forwardRef, useEffect, useImperativeHandle, useMemo, useRef,
 } from "react"
-import { Status } from "../../interfaces/game.interfaces";
+import { GameStatus, CellStatus } from "../../interfaces/game.interfaces";
 import { useBoardGame } from "../../hooks/useBoardGame";
 
 const ROW = 3;
@@ -9,14 +9,14 @@ const COL = 3;
 const WINNING_COUNT = 3;
 
 const Cell: FunctionComponent<{
-    status: Status;
+    status: CellStatus;
     onClick: () => void;
 }> = ({ status, onClick }) => {
-    if (status === Status.Blank) {
+    if (status === CellStatus.Blank) {
         return <td onClick={onClick}>blank</td>;
     }
 
-    if (status === Status.Player1) {
+    if (status === CellStatus.Player1) {
         return <td>x</td>
     }
     return <td>o</td>;
@@ -26,9 +26,24 @@ export interface IBoardRef {
     placeChess: (x: number, y: number) => void;
 }
 
-export const Board = forwardRef((_, ref) => {
+export interface IBoardProps {
+    onStatusChange: (status: GameStatus) => void;
+}
+
+
+export const Board = forwardRef(({
+    onStatusChange,
+}: IBoardProps, ref) => {
+
     const boardRef = useRef(null);
-    const { bitmap, placeChess } = useBoardGame(ROW, COL, WINNING_COUNT);
+    const {
+        bitmap, placeChess, gameStatus,
+    } = useBoardGame(ROW, COL, WINNING_COUNT);
+
+    const enable = useMemo<boolean>(
+        () => gameStatus === GameStatus.OnGoing,
+        [gameStatus]
+    );
 
     const board = useMemo(() => bitmap.map((r, x) => (
         <tr key={`row-${x}`}>
@@ -36,7 +51,7 @@ export const Board = forwardRef((_, ref) => {
                 r.map((c, y) => (
                     <Cell key={`cell-${x}-${y}`}
                         status={c}
-                        onClick={() => placeChess(x, y)}
+                        onClick={() => enable && placeChess(x, y)}
                     />
                 ))
             }
@@ -47,6 +62,13 @@ export const Board = forwardRef((_, ref) => {
         /** Place a chess by the position of (x, y) */
         placeChess: (x: number, y: number) => placeChess(x, y),
     }), [placeChess]);
+
+    useEffect(() => {
+        if (gameStatus === GameStatus.OnGoing) return;
+
+        console.debug(`CellStatus Change: ${gameStatus}`);
+        onStatusChange(gameStatus);
+    }, [gameStatus, onStatusChange]);
 
     return (
         <table ref={boardRef}>
