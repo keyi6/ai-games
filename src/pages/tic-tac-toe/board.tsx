@@ -1,25 +1,45 @@
 import React, {
-    FunctionComponent, forwardRef, useEffect, useImperativeHandle, useMemo, useRef,
+    FunctionComponent, forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef,
 } from "react"
 import { GameStatus, CellStatus } from "../../interfaces/game.interfaces";
 import { useBoardGame } from "../../hooks/useBoardGame";
+import styled from "styled-components";
 
 const ROW = 3;
 const COL = 3;
 const WINNING_COUNT = 3;
+const SIZE = 20;
+
+const EmptyCell = styled.td`
+    height: ${SIZE}vmin;
+    width: ${SIZE}vmin;
+    font-size: calc(${SIZE}vmin - 20px);
+    line-height: calc(${SIZE}vmin - 20px);
+    cursor: pointer;
+    text-align: center;
+`;
+
+const Player1Cell = styled(EmptyCell)`
+    &:after {
+        content: "⭕️";
+    }
+`;
+
+const Player2Cell = styled(EmptyCell)`
+    &:after {
+        content: "❌";
+    }
+`;
 
 const Cell: FunctionComponent<{
     status: CellStatus;
     onClick: () => void;
 }> = ({ status, onClick }) => {
-    if (status === CellStatus.Blank) {
-        return <td onClick={onClick}>blank</td>;
-    }
+    if (status === CellStatus.Blank) return <EmptyCell onClick={onClick} />
 
-    if (status === CellStatus.Player1) {
-        return <td>x</td>
-    }
-    return <td>o</td>;
+    return status === CellStatus.Player1
+        ? <Player1Cell />
+        : <Player2Cell />;
 };
 
 export interface IBoardRef {
@@ -29,6 +49,14 @@ export interface IBoardRef {
 export interface IBoardProps {
     onStatusChange: (status: GameStatus) => void;
 }
+
+const Table = styled.table`
+    border-collapse: collapse;
+
+    td + td,
+    th + th { border-left: 2vmin solid #fff; }
+    tr + tr { border-top: 2vmin solid #fff; }
+`;
 
 
 export const Board = forwardRef(({
@@ -56,25 +84,23 @@ export const Board = forwardRef(({
                 ))
             }
         </tr>
-    )), [bitmap, placeChess]);
+    )), [bitmap, placeChess, enable]);
 
     useImperativeHandle(ref, (): IBoardRef => ({
         /** Place a chess by the position of (x, y) */
         placeChess: (x: number, y: number) => placeChess(x, y),
     }), [placeChess]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (gameStatus === GameStatus.OnGoing) return;
-
-        console.debug(`CellStatus Change: ${gameStatus}`);
         onStatusChange(gameStatus);
     }, [gameStatus, onStatusChange]);
 
     return (
-        <table ref={boardRef}>
+        <Table ref={boardRef}>
             <tbody>
                 {board}
             </tbody>
-        </table>
+        </Table>
     );
 });

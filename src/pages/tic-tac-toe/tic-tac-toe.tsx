@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from "react";
 import { Board, IBoardRef } from "./board";
 import { GameStatus } from "../../interfaces/game.interfaces";
+import { Page } from "../../components/page";
 
 export const TicTacToePage = () => {
     const ref = useRef<IBoardRef>(null);
@@ -11,6 +12,8 @@ export const TicTacToePage = () => {
     }, []);
 
     return (
-        <Board onStatusChange={onStatusChange} ref={ref} />
+        <Page>
+            <Board onStatusChange={onStatusChange} ref={ref} />
+        </Page>
     );
 };
