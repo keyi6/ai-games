@@ -8,7 +8,9 @@ function checkRow(arr: CellStatus[], winningCount: number): GameStatus {
 
         if (arr.slice(i + 1, i + winningCount).every(x => x === arr[i])) {
             console.debug("Matched", arr);
-            return arr[i] as unknown as GameStatus;
+            return arr[i] === CellStatus.Player1
+                ? GameStatus.Player1Won
+                : GameStatus.Player2Won;
         }
     }
 
@@ -76,10 +78,12 @@ export function check(
     return GameStatus.Tie;
 }
 
-export function useBoardGame(row: number, column: number, winningCount: number) {
+
+export function useBoardGame(row: number, column: number, winningCount: number, firstHand: boolean) {
     const [seq, setSeq] = useState<number>(0);
     const [moves, setMoves] = useState<IMove[]>([]);
-    const [player, setPlayer] = useState<boolean>(true);
+    // true -> player 1 is going to place next chess; false -> player 2
+    const [player, setPlayer] = useState<boolean>(firstHand);
 
     const placeChess = useCallback((x: number, y: number) => {
         setMoves(pre => [...pre, {
@@ -88,6 +92,8 @@ export function useBoardGame(row: number, column: number, winningCount: number) 
         }]);
         setSeq(pre => pre + 1);
         setPlayer(pre => !pre);
+
+        return moves;
     }, [seq, player]);
 
     const bitmap = useMemo<CellStatus[][]>(() => {
@@ -103,5 +109,12 @@ export function useBoardGame(row: number, column: number, winningCount: number) 
         [bitmap, row, column, winningCount],
     );
 
-    return { bitmap, placeChess, gameStatus };
+    const restart = useCallback(() => {
+        setSeq(0);
+        setMoves([]);
+        setPlayer(firstHand);
+        console.log("restart");
+    }, []);
+
+    return { bitmap, placeChess, gameStatus, player, restart };
 }

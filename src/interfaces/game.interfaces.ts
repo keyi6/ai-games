@@ -1,14 +1,14 @@
 export enum CellStatus {
-    Blank = "Blank",
-    Player1 = "Player1",
-    Player2 = "Player2",
+    Blank = 0,
+    Player1 = 1,
+    Player2 = -1,
 }
 
 export enum GameStatus {
-    OnGoing = "OnGoing",
-    Tie = "Tie",
-    Player1Won = "Player1 Won",
-    Player2Won = "Player2 Won",
+    OnGoing,
+    Tie = "tie",
+    Player1Won = "player 1",
+    Player2Won = "player 2",
 }
 
 export interface IMove {

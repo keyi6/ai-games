@@ -1,5 +1,6 @@
 import React, {
-    FunctionComponent, forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef,
+    FunctionComponent, forwardRef, useEffect, useImperativeHandle,
+    useLayoutEffect, useMemo, useRef,
 } from "react"
 import { GameStatus, CellStatus } from "../../interfaces/game.interfaces";
 import { useBoardGame } from "../../hooks/useBoardGame";
@@ -44,10 +45,12 @@ const Cell: FunctionComponent<{
 
 export interface IBoardRef {
     placeChess: (x: number, y: number) => void;
+    restart: () => void;
 }
 
 export interface IBoardProps {
     onStatusChange: (status: GameStatus) => void;
+    onPlayerPlaced: (board: CellStatus[][]) => void;
 }
 
 const Table = styled.table`
@@ -61,12 +64,12 @@ const Table = styled.table`
 
 export const Board = forwardRef(({
     onStatusChange,
+    onPlayerPlaced,
 }: IBoardProps, ref) => {
-
     const boardRef = useRef(null);
     const {
-        bitmap, placeChess, gameStatus,
-    } = useBoardGame(ROW, COL, WINNING_COUNT);
+        bitmap, placeChess, gameStatus, player, restart,
+    } = useBoardGame(ROW, COL, WINNING_COUNT, true);
 
     const enable = useMemo<boolean>(
         () => gameStatus === GameStatus.OnGoing,
@@ -89,12 +92,18 @@ export const Board = forwardRef(({
     useImperativeHandle(ref, (): IBoardRef => ({
         /** Place a chess by the position of (x, y) */
         placeChess: (x: number, y: number) => placeChess(x, y),
+        restart: () => restart(),
     }), [placeChess]);
 
     useLayoutEffect(() => {
         if (gameStatus === GameStatus.OnGoing) return;
         onStatusChange(gameStatus);
     }, [gameStatus, onStatusChange]);
+
+    useEffect(() => {
+        if (player || gameStatus !== GameStatus.OnGoing) return;
+        onPlayerPlaced(bitmap);
+    }, [player, bitmap]);
 
     return (
         <Table ref={boardRef}>
