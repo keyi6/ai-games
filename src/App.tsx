@@ -1,9 +1,9 @@
 import React from 'react';
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { HomePage, TicTacToePage, GomokuPage } from './pages';
 import './App.css';
 
-const router = createBrowserRouter([
+const router = createHashRouter([
     {
         path: "/tic-tac-toe",
         element: <TicTacToePage />,
