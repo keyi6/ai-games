@@ -4,7 +4,7 @@ import React, {
 } from "react"
 import { GameStatus, CellStatus } from "../../interfaces/game.interfaces";
 import { useBoardGame } from "../../hooks/useBoardGame";
-import { MARGIN_L, MARGIN_U, click2Coordinates, draw, init } from "./canvasUtils";
+import { click2Coordinates, draw, init } from "./canvasUtils";
 
 const ROW = 15;
 const COL = 15;
@@ -77,11 +77,6 @@ export const Board = forwardRef(({
         <div>
             <canvas ref={canvasRef}
                 onClick={onClick}
-                style={{
-                    position: 'absolute',
-                    top: MARGIN_U,
-                    left: MARGIN_L
-                }}
             />
 
         </div>
