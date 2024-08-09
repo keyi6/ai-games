@@ -93,7 +93,7 @@ export const Board = forwardRef(({
         /** Place a chess by the position of (x, y) */
         placeChess: (x: number, y: number) => placeChess(x, y),
         restart: () => restart(),
-    }), [placeChess]);
+    }), [placeChess, restart]);
 
     useLayoutEffect(() => {
         if (gameStatus === GameStatus.OnGoing) return;
@@ -103,7 +103,7 @@ export const Board = forwardRef(({
     useEffect(() => {
         if (player || gameStatus !== GameStatus.OnGoing) return;
         onPlayerPlaced(bitmap);
-    }, [player, bitmap]);
+    }, [player, bitmap, gameStatus, onPlayerPlaced]);
 
     return (
         <Table ref={boardRef}>

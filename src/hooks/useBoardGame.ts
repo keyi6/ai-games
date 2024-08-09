@@ -113,8 +113,7 @@ export function useBoardGame(row: number, column: number, winningCount: number, 
         setSeq(0);
         setMoves([]);
         setPlayer(firstHand);
-        console.log("restart");
-    }, []);
+    }, [firstHand]);
 
-    return { bitmap, placeChess, gameStatus, player, restart };
+    return { bitmap, placeChess, gameStatus, player, restart, seq };
 }

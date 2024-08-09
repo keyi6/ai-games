@@ -40,7 +40,7 @@ export interface IButtonProps {
     /**
      * If set true, the `onClick` will be trigger after animation
      */
-    delay: boolean;
+    delay?: boolean;
 }
 
 export const Button = ({
@@ -63,7 +63,7 @@ export const Button = ({
             ref.current?.blur();
             if (delay) onClick();
         }, 700);
-    }, [onClick]);
+    }, [onClick, delay, active]);
 
     return (
         <ButtonWrapper ref={ref} onClick={onClickWithAnimation}>
