@@ -100,7 +100,13 @@ export function useBoardGame(row: number, column: number, winningCount: number, 
         const ret = new Array(row)
             .fill(0)
             .map(_ => new Array(column).fill(CellStatus.Blank));
-        moves.forEach(({ x, y, status }) => ret[x][y] = status);
+        moves.forEach(({ x, y, status }) => {
+            if (x < 0 || y < 0 || x >= row || y >= column) {
+                console.error(`Invalid move: (${x}, ${y})`);
+                console.log("current moves:", moves);
+            }
+            ret[x][y] = status;
+        });
         return ret;
     }, [moves, column, row]);
 
