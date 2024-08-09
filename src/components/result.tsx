@@ -1,9 +1,6 @@
-import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState } from "react";
-import sample from "lodash/sample";
+import React, { forwardRef, useImperativeHandle, useMemo, useState } from "react";
 import styled from "styled-components";
 import { GameStatus } from "../interfaces/game.interfaces";
-
-const COLOR_LIST = ['#606470', '#3c79ce', '#4CAF50'];
 
 export const ResultWrapper = styled.div`
     position: absolute;
@@ -18,12 +15,11 @@ export const ResultWrapper = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 10rem;
+    font-size: 6rem;
     height: 100vh;
     width: 100vw;
     z-index: 999;
-
-    
+    text-align: center;
 `;
 
 export interface IResultRef {

@@ -3,6 +3,8 @@ import styled from "styled-components";
 
 const ButtonWrapper = styled.button`
     all:  unset;
+    min-width: 140px;
+    text-align: center;
     color: #333;
     text-decoration: none;
     text-transform: uppercase;
@@ -28,31 +30,39 @@ const ButtonWrapper = styled.button`
         top: 0;
         left: 0;
         text-align: center;
-        font-size: 10rem;
+        font-size: 5rem;
         border-radius: 0%;
     }
 `;
 
+export interface IButtonProps {
+    onClick?: () => void;
+    /**
+     * If set true, the `onClick` will be trigger after animation
+     */
+    delay: boolean;
+}
+
 export const Button = ({
     children,
-    onClick = () => { },
-}: PropsWithChildren<{
-    onClick?: () => void,
-}>) => {
+    onClick = () => {},
+    delay = false,
+}: PropsWithChildren<IButtonProps>) => {
     const [active, setActive] = useState<boolean>(false);
     const ref = useRef<HTMLButtonElement>(null);
 
     const onClickWithAnimation = useCallback(() => {
         if (active) return;
 
-        onClick();
+        if (!delay) onClick();
 
         setActive(true);
         ref.current?.focus();
         setTimeout(() => {
             setActive(false);
             ref.current?.blur();
-        }, 600);
+            if (delay) onClick();
+        }, 700);
     }, [onClick]);
 
     return (
