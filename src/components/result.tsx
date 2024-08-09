@@ -10,7 +10,6 @@ export const ResultWrapper = styled.div`
     left: 0;
     color: #333;
     background-color: #fff;
-    opacity: 0.8;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,14 +22,15 @@ export const ResultWrapper = styled.div`
 `;
 
 export interface IResultRef {
-    show: (status: GameStatus) => void;
+    show: (status: GameStatus | "loading") => void;
     hide: () => void;
 }
 
 export const Result = forwardRef<IResultRef>((_, ref) => {
     const [active, setActive] = useState<boolean>(false);
-    const [status, setStatus] = useState<GameStatus>(GameStatus.OnGoing);
+    const [status, setStatus] = useState<GameStatus | "loading">(GameStatus.OnGoing);
     const text = useMemo(() => {
+        if (status === "loading") return "Calculating...";
         if (status === GameStatus.Player1Won) return "You won";
         if (status === GameStatus.Player2Won) return "You lost";
         return "Tie";
@@ -49,7 +49,7 @@ export const Result = forwardRef<IResultRef>((_, ref) => {
     
     if (!active) return null;
     return (
-        <ResultWrapper>
+        <ResultWrapper style={{ opacity: status === "loading" ? 0.1 : 0.8 }}>
             {text}
         </ResultWrapper>
     );

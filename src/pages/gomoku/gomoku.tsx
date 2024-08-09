@@ -5,7 +5,7 @@ import { Page } from "../../components/page";
 import { Button } from "../../components/button";
 import { IResultRef, Result } from "../../components/result";
 import { Board, IBoardRef } from "./board";
-import { findBestMove, negamax } from "../../algorithms/negmax";
+import { findBestMove } from "../../algorithms/negmax";
 
 
 const ActionBar = styled.section`
@@ -29,15 +29,18 @@ export const GomokuPage = () => {
 
         setTimeout(() => {
             resultRef.current?.show(status);
-        }, 400);
+        }, 200);
     }, []);
 
     const onPlayerPlaced = useCallback((board: CellStatus[][]) => {
+        resultRef.current?.show("loading");
+
+        const res = findBestMove(board);
+        console.log(res);
         setTimeout(() => {
-            const res = findBestMove(board);
-            console.log(res);
             boardRef.current?.placeChess(res.x, res.y);
-        }, 100);
+            resultRef.current?.hide();
+        }, 500);
     }, []);
 
 
