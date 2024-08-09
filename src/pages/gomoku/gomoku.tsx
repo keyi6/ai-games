@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { Board, IBoardRef } from "./board";
+import styled from "styled-components";
 import { CellStatus, GameStatus } from "../../interfaces/game.interfaces";
 import { Page } from "../../components/page";
-import { findBestMove } from "../../algorithms/minmax";
 import { Button } from "../../components/button";
-import styled from "styled-components";
 import { IResultRef, Result } from "../../components/result";
+import { Board, IBoardRef } from "./board";
+import { findBestMove, negamax } from "../../algorithms/negmax";
 
 
 const ActionBar = styled.section`
@@ -33,9 +33,11 @@ export const GomokuPage = () => {
     }, []);
 
     const onPlayerPlaced = useCallback((board: CellStatus[][]) => {
-        //const res = findBestMove(board);
-
-        // boardRef.current?.placeChess(res.x, res.y);
+        setTimeout(() => {
+            const res = findBestMove(board);
+            console.log(res);
+            boardRef.current?.placeChess(res.x, res.y);
+        }, 100);
     }, []);
 
 

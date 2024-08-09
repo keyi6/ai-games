@@ -52,7 +52,7 @@ export function draw(canvas: HTMLCanvasElement | null, x: number, y: number, tur
     const x1 = x * RATE + OFFSET;
     const y1 = y * RATE + OFFSET;
 
-    ctx.fillStyle = turn % 2 === 0 ? " #fff" : " #000";
+    ctx.fillStyle = turn % 2 === 0 ? "#000" : "#fff";
 
     ctx.beginPath();
     ctx.arc(x1, y1, RADIUS, 0, Math.PI * 2, true);
@@ -60,7 +60,7 @@ export function draw(canvas: HTMLCanvasElement | null, x: number, y: number, tur
     ctx.fill();
     ctx.stroke();
 
-    ctx.fillStyle = turn % 2 === 0 ? "#000" : "#fff";
+    ctx.fillStyle = turn % 2 === 0 ? " #fff" : " #000";
     ctx.font="20px sans-serif";
     const text = `${turn + 1}`;
     const x2 = x1 - RADIUS - text.length * 10 + 23;

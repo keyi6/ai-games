@@ -17,3 +17,9 @@ export interface IMove {
     status: CellStatus;
     seq: number;
 }
+
+export interface Move {
+    x: number;
+    y: number;
+    score: number;
+};

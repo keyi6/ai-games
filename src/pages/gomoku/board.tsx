@@ -38,8 +38,14 @@ export const Board = forwardRef(({
 
     useImperativeHandle(ref, (): IBoardRef => ({
         /** Place a chess by the position of (x, y) */
-        placeChess: (x: number, y: number) => placeChess(x, y),
-        restart: () => restart(),
+        placeChess: (x: number, y: number) => {
+            draw(canvasRef.current, x, y, seq);
+            placeChess(x, y);
+        },
+        restart: () => {
+            restart();
+            init(canvasRef.current);
+        }
     }), [placeChess, restart]);
 
     useLayoutEffect(() => {
@@ -57,8 +63,9 @@ export const Board = forwardRef(({
     }, []);
 
     const onClick = useCallback((e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        if (!enable) return;
+
         const { x, y } = click2Coordinates(e);
-        console.log(`coord: ${x}, ${y}. bitmap status: ${bitmap[x][y]}`);
 
         if (bitmap[x][y] === CellStatus.Blank) {
             draw(canvasRef.current, x, y, seq);
