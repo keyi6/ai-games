@@ -39,6 +39,7 @@ export const GomokuPage = () => {
         console.log(res);
         setTimeout(() => {
             boardRef.current?.placeChess(res.x, res.y);
+            boardRef.current?.setHighlighPos(res.x, res.y);
             resultRef.current?.hide();
         }, 500);
     }, []);

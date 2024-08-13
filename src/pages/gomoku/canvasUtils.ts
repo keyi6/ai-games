@@ -6,7 +6,7 @@ const WIDTH = window.innerWidth;
 const BASE = HEIGHT < WIDTH ? HEIGHT : WIDTH;
 const BOARD_SIZE = BASE * 0.6;
 
-const RATE = Math.round(BOARD_SIZE / 15);
+export const RATE = Math.round(BOARD_SIZE / 15);
 const OFFSET = Math.ceil((BOARD_SIZE - RATE * 14) * 0.5);
 const RADIUS = RATE * 0.4;
 
@@ -66,10 +66,17 @@ export function draw(canvas: HTMLCanvasElement | null, x: number, y: number, tur
 };
 
 
-export function click2Coordinates(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
+export function client2Coordinate(e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) {
     const cx = e.clientX - OFFSET - (window.innerWidth- BOARD_SIZE) / 2;
     const cy = e.clientY - OFFSET - (window.innerHeight- BOARD_SIZE) / 2;
 
     const x = Math.round(cx / RATE), y = Math.round(cy / RATE);
+    return { x, y };
+}
+
+export function coordinate2client(cx: number, cy: number) {
+    const x = cx * RATE + OFFSET + (window.innerWidth - BOARD_SIZE) / 2;
+    const y = cy * RATE + OFFSET + (window.innerHeight - BOARD_SIZE) / 2;
+
     return { x, y };
 }
