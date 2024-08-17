@@ -35,8 +35,8 @@ const Preview = styled.span`
 `;
 
 const Highlight = styled.span`
-    height: ${RATE - 5}px;
-    width: ${RATE - 5}px;
+    height: ${RATE - 7}px;
+    width: ${RATE - 7}px;
     border: 2px solid #dadada;
     border-radius: 50%;
     display: inline-block;
@@ -78,7 +78,7 @@ export const Board = forwardRef(({
         },
         setHighlighPos: (x, y) => {
             const { x: x1, y: y1 } = coordinate2client(x, y);
-            setHighlightPos({ x: x1 - RATE / 2, y: y1 - RATE / 2 });
+            setHighlightPos({ x: x1 - RATE / 2 + 1.1, y: y1 - RATE / 2 });
         },
     }), [placeChess, restart]);
 
